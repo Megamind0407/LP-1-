@@ -19,7 +19,7 @@ public class FCFS {
 		{
 			System.out.println("enter process " + (i+1) + " arrival time: ");
 			ar[i] = sc.nextInt();
-			System.out.println("enter process " + (i+1) + " brust time: ");
+			System.out.println("enter process " + (i+1) + " burst time: ");
 			bt[i] = sc.nextInt();
 			pid[i] = i+1;
 		}
