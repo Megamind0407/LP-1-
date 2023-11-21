@@ -1,123 +1,83 @@
-
 import java.util.Scanner;
- 
+
 public class Priority {
-        
-    public static void main(String args[]) {
-            try (Scanner s = new Scanner(System.in)) {
-              int ct[],a[],x,n,p[],pp[],bt[],w[],t[],i,k=0;
-	          float atat,awt;
-              p = new int[10];
-              pp = new int[10];
-              bt = new int[10];
-              w = new int[10];
-              t = new int[10];
-   a= new int[10];
-  ct=new int[10];
-  //n is number of process
-  //p is process
-  //pp is process priority
-  //bt is process burst time
-  //w is wait time
-  // t is turnaround time
-  //awt is average waiting time
-  //atat is average turnaround time
- 
- 
-  System.out.print("Enter the number of process : ");
-  n = s.nextInt();
-  System.out.print("\n\t Enter burst time : time priorities  : arrival time\n");
- 
-  for(i=0;i<n;i++)
-  {
-    System.out.print("\nProcess["+(i+1)+"]:");
-   bt[i] = s.nextInt();
-   pp[i] = s.nextInt();
-   a[i]=s.nextInt();
-   p[i]=i+1;
-  }
- //SORT ON THE BASIS OF ARRIVAL TIME AND PRIORITY
- for(i=0;i<n-1;i++)
-  {
-  
-   for(int j=i+1;j<n;j++)
-   {
-
-    if(a[i]>=a[j] || pp[i]>pp[j])
-    {
-   x=pp[i];
-   pp[i]=pp[j];
-   pp[j]=x;
-   x=bt[i];
-   bt[i]=bt[j];
-   bt[j]=x;
-   x=p[i];
-   p[i]=p[j];
-   p[j]=x;
-    x=a[i];
-   a[i]=a[j];
-   a[j]=x;
-  }
-   
-  }
-
-}
-//sorting on the basis of priority
-
- for(i=1;i<=n;i++)
-  {
-  if(i==1)
-   {  k=bt[0];
-
-ct[0]=k;}
-  else{
-    k=bt[i-1]+k;
-ct[i-1]=k;}
-   for(int j=i+1;j<=n;j++)
-   {
-
-    if(pp[i]<pp[j] && a[j]<=k)
-    {
-   x=pp[i];
-   pp[i]=pp[j];
-   pp[j]=x;
-   x=bt[i];
-   bt[i]=bt[j];
-   bt[j]=x;
-   x=p[i];
-   p[i]=p[j];
-   p[j]=x;
-   x=a[i];
-   a[i]=a[j];
-   a[j]=x;
-  }
-  }
-}
-w[0]=0;
-awt=0;
-t[0]=bt[0];
-atat=t[0];
-for(i=1;i<n;i++)
- {
- 
-  t[i]=ct[i]-a[i];
-  w[i]=t[i]-bt[i];
-  awt+=w[i];
-  atat+=t[i];
- }
- 
-//prority logic
-
-//Displaying the process
- 
- System.out.print("\n\nProcess \t Arrival Time \t Burst Time \t Wait Time \t Turn Around Time   \tPriority \n");
-for(i=0;i<n;i++)
- System.out.print("\n   "+p[i]+"\t\t\t   "+a[i]+"\t\t\t   "+bt[i]+"\t\t\t     "+w[i]+"\t\t\t     "+t[i]+"\t\t\t     "+pp[i]+"\n");
-awt/=n;
-atat/=n;
- System.out.print("\n Average Wait Time : "+awt);
-System.out.print("\n Average Turn Around Time : "+atat);
+    public static void sortcolm(int arr[][], int start, int end, int colm) {
+        for (int a = start; a < end - 1; a++) {
+            int min = a;
+            for (int b = a + 1; b < end; b++) {
+                if (arr[b][colm] < arr[min][colm]) {
+                    min = b;
+                }
             }
- 
+            int temp1 = arr[a][0];
+            arr[a][0] = arr[min][0];
+            arr[min][0] = temp1;
+            int temp2 = arr[a][1];
+            arr[a][1] = arr[min][1];
+            arr[min][1] = temp2;
+            int temp3 = arr[a][2];
+            arr[a][2] = arr[min][2];
+            arr[min][2] = temp3;
         }
+    }
+
+    public static void main(String[] args) {
+        int p_no;
+        float avgTAT = 0, avgWT = 0;
+        int process[][] = new int[10][6];
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter the no. of processes: ");
+        p_no = sc.nextInt();
+        for (int i = 0; i < p_no; i++) {
+            System.out.print("Arrival Time: ");
+            process[i][0] = sc.nextInt();
+            System.out.print("Burst Time: ");
+            process[i][1] = sc.nextInt();
+            System.out.print("Priority: ");
+            process[i][2] = sc.nextInt();
+        }
+        sortcolm(process, 0, p_no, 0);
+        int flag = 0, c_ptr = process[0][1];
+        for (int a = 0; a < p_no - 1; a++) {
+            int first = a + 1, last = 0;
+            for (int b = a + 1; b < p_no; b++) {
+                if (process[b][0] <= c_ptr) {
+                    last = b;
+                    flag = 1;
+                } else {
+                    break;
+                }
+            }
+            if (flag == 1) {
+                sortcolm(process, first, last + 1, 2);
+                c_ptr = c_ptr + process[first][1];
+            }
+        }
+        int temp = 0;
+        for (int j = 0; j < p_no; j++) {
+            process[j][3] = temp + process[j][1];
+            temp = process[j][3];
+            process[j][4] = process[j][3] - process[j][0];
+            avgTAT = avgTAT + process[j][4];
+            process[j][5] = process[j][4] - process[j][1];
+            avgWT = avgWT + process[j][5];
+        }
+        avgTAT = avgTAT / p_no;
+        avgWT = avgWT / p_no;
+        // 7 032 256 143 425 697 544 71010
+        // print Priority(non pre-emptive) table
+        System.out.println("\n\tPriority Scheduling");
+        System.out.println("success");
+        System.out.println("Arrival | Burst | Priority | Completion | TurnAround | Waiting");
+        System.out.println("success");
+        System.out.println("--------------------------------------------------------------");
+        for (int k = 0; k < p_no; k++) {
+            System.out.println(process[k][0] + "\t| " + process[k][1] + "\t| " + process[k][2] + "\t | " + process[k][3]
+                    + "\t\t| " + process[k][4] + "\t | " + process[k][5]);
+        }
+        System.out.println("--------------------------------------------------------------");
+        System.out.println("Average Turn Around Time: " + avgTAT);
+        System.out.println("Average Waiting Time: " + avgWT);
+        sc.close();
+    }
 }
